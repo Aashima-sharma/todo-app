@@ -3,7 +3,7 @@ pipeline {
      stages {
               stage ("build")
                   {  steps
-                       { app = docker.build("aashima3613/todo-app")
+                       { todo-app = docker.build("aashima3613/todo-app")
                          echo "Building the application..."
                        }
                   }
