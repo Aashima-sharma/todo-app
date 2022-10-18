@@ -9,9 +9,9 @@ pipeline {
     stages {
             stage('Cloning our Git') {
                 steps {
-                git 'git@github.com:Aashima-sharma/todo-app.git'
-                credentialsId: 'git'
-                }
+                        git 'git@github.com:Aashima-sharma/todo-app.git'
+                        
+                      }
             }
 
             stage('Building Docker Image') {
