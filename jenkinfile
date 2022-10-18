@@ -2,7 +2,7 @@ pipeline {
    agent any
      stages {
               stage ("build")
-                  { steps
+                  { step
                      {  
                         app = docker.build("aashima3613/todo-app")
                         echo "Building the application..."
@@ -10,13 +10,13 @@ pipeline {
                   }
 
                stage ("test")
-                  { steps 
+                  { step 
                     {  echo "Building the application..."
                     }
                   }
                
                stage ("Push image") 
-                  {  steps
+                  {  step
                      {docker.withRegistry('https://registry.hub.docker.com', 'docker')
                        {
                         app.push("${env.BUILD_NUMBER}")
@@ -25,7 +25,7 @@ pipeline {
                   }
         
                stage ("deploy") 
-                   { steps 
+                   { step 
                      {  echo "Building the application..."
                      }
                    }
