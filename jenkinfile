@@ -1,27 +1,40 @@
-node {
-        def app
-
-            stage('Clone repository') 
-                {
-                     checkout scm
-                 }
-
-             stage('Build image') {
-  
-                      app = docker.build("aashima3613/todo-node")
-                  }
-
-             stage('Test image') 
-                  {   app.inside 
-                      {
-                        sh 'echo "Tests passed"'
-                      }
-                   }
-
-             stage('Push image') 
-                  {
-                      docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-                      app.push("${env.BUILD_NUMBER}")
-                  }
+pipeline {
+    environment {
+    registry = "aashima3613/todo-node"
+    registryCredential = 'docker'
+    dockerImage = ''
     }
-}
+
+    agent any
+    stages {
+            stage('Cloning our Git') {
+                steps {
+                git 'git@github.com:Aashima-sharma/todo-app.git'
+                }
+            }
+
+            stage('Building Docker Image') {
+                steps {
+                    script {
+                        dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                    }
+                }
+            }
+
+            stage('Deploying Docker Image to Dockerhub') {
+                steps {
+                    script {
+                        docker.withRegistry('', registryCredential) {
+                        dockerImage.push()
+                        }
+                    }
+                }
+            }
+
+            stage('Cleaning Up') {
+                steps{
+                  sh "docker rmi --force $registry:$BUILD_NUMBER"
+                }
+            }
+        }
+    }
