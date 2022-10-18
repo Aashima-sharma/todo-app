@@ -1,33 +1,26 @@
-pipeline {
-   agent any
-     stages {
-              stage ("build")
-                  {  steps
-                       { app = docker.build("aashima3613/todo-app")
-                         
-                       }
+node {
+        def app
+
+            stage('Clone repository') 
+                {
+                     checkout scm
+                 }
+
+             stage('Build image') {
+  
+                      app = docker.build("aashima3613/todo-node")
                   }
 
-               stage ("test")
-                  {  steps
-                     { echo "Building the application..."
-                     }
-                  }
-               
-               stage ("Push image") 
-                  { steps 
-                     { docker.withRegistry('https://registry.hub.docker.com', 'docker')
-                       {
-                        app.push("${env.BUILD_NUMBER}")
-                       } 
-                     }
-                  }
-        
-               stage ("deploy") 
-                   { steps 
-                     {  echo "Building the application..."
-                     }
+             stage('Test image') 
+                  {   app.inside 
+                      {
+                        sh 'echo "Tests passed"'
+                      }
                    }
-              }  
-         }            
 
+             stage('Push image') 
+                  {
+                      docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                      app.push("${env.BUILD_NUMBER}")
+                  }
+    }
