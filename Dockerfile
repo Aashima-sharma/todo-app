@@ -1,6 +1,6 @@
 FROM node
 WORKDIR user/src/app
-COPY package.json .
+COPY --chown=node:node package*.json ./
 RUN install npm 
 RUN npm audit fix
 COPY . .
