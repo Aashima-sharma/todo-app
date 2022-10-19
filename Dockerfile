@@ -1,8 +1,8 @@
 FROM node
 WORKDIR user/src/app
-COPY --chown=node:node package*.json ./
-RUN install npm 
-RUN npm audit fix
+COPY package*.json ./
+USER node
+RUN npm install
 COPY . .
 EXPOSE 5000
 CMD "node" "server.js"
